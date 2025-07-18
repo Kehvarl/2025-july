@@ -25,6 +25,20 @@ def tick args
         init args
     end
 
+    dx = 0
+    if inputs.keyboard.left
+        dx = -3
+    elsif inputs.keyboard.right
+        dx =  3
+    end
+
+    dy = 0
+    if inputs.keyboard.up
+        dy =  3
+    elsif inputs.keyboard.down
+        dy = -3
+    end
+
     args.outputs.primitives << args.state.center
     args.outputs.primitives << args.state.ship
 
