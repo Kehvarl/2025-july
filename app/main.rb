@@ -1,23 +1,32 @@
 
-def dist(m1, m2)
-    dx = abs(m1.x - m2.x)
-    dy = abs(m1.y - m2.y)
-    return Math.sqrt(dx^2 + dy^2)
-end
-
 def calc_gravity (m1, m2)
-    G = 6.674e-11
-    d = dist(m1, m2)
-    return G * ((m1.m * m2.m)/d^2)
+    G = 0.05
+    dx = m2.x - m1.x
+    dy = m2.y - m1.y
+    d2 = dx**2 + dy**2
+    d = Math.sqrt(d2)
+
+    f = G * (m1.m * m2.m) / d2
+    fx = f * (dx/d)
+    fy = f * (dy/d)
+
+    return fx, fy
 end
 
 def init args
     args.state.center = {x: 640, y: 360, anchor_x: 0.5, anchor_y: 0.5,
                          w: 4, h: 4, path: "sprites/misc/tiny-star.png",
-                         m: 5.0e30}.sprite!
-    args.state.ship = {x: 400, y: 100, anchor_x: 0.5, anchor_y: 0.5,
-                       w: 16, h: 16, path: "sprites/misc/lowrez-ship-blue.png",
-                       m: 10}.sprite!
+                         m: 25000}.sprite!
+    args.state.ships = []
+    args.state.ships << {x: 400, y: 100, anchor_x: 0.5, anchor_y: 0.5,
+                         w: 16, h: 16, path: "sprites/misc/lowrez-ship-blue.png",
+                         vx: 0, vy: 1,
+                         m: 10}.sprite!
+
+    args.state.ships << {x: 880, y: 620, anchor_x: 0.5, anchor_y: 0.5, angle: 180,
+                         w: 16, h: 16, path: "sprites/misc/lowrez-ship-red.png",
+                         vx: 0, vy: -1,
+                         m: 10}.sprite!
 end
 
 def tick args
@@ -25,21 +34,19 @@ def tick args
         init args
     end
 
-    dx = 0
-    if inputs.keyboard.left
-        dx = -3
-    elsif inputs.keyboard.right
-        dx =  3
+    args.state.ships.each do |s|
+        fx,fy = calc_gravity(s, args.state.center)
+        ax = fx/s.m
+        ay = fy/s.m
+        s.vx += ax
+        s.vy += ay
+
+        s.x += s.vx
+        s.y += s.vy
     end
 
-    dy = 0
-    if inputs.keyboard.up
-        dy =  3
-    elsif inputs.keyboard.down
-        dy = -3
-    end
 
     args.outputs.primitives << args.state.center
-    args.outputs.primitives << args.state.ship
+    args.outputs.primitives << args.state.ships
 
 end
