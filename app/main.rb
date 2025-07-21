@@ -14,8 +14,14 @@ def calc_gravity (m1, m2)
 end
 
 def thrust_vector ship
-    a_rad = (ship.angle + 90)   / 180 * 3.14
+    # Calculate Thrust in 2d space with the same properties as DragonRuby uses for Sprites
+    # 0-degrees:  Positive X
+    # Rotation :  Counterclockwise
 
+    # Offset sprite rotation 90 degrees Counterclockwise to account for sprite orientation
+    a_rad = (ship.angle + 90)  * (Math::PI / 180)
+
+    # Calculate X and Y components of total Thrust vector.
     ship.vx += Math.cos(a_rad) * ship.thrust
     ship.vy += Math.sin(a_rad) * ship.thrust
 end
