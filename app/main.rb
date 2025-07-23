@@ -47,6 +47,43 @@ def calc_circular_orbit(ship, star)
     ship.vy = ty * v
 end
 
+def generate_background
+    args.outputs[:background].w = 3840
+    args.outputs[:background].h = 2160
+    args.outputs[:background].background_color = [0, 0, 0, 255]
+end
+
+def calc_camera
+    @camera.x = @player.x.clamp(640, 3200)
+    @camera.y = @player.y.clamp(360, 1800)
+end
+
+def render_scene
+    outputs[:scene].transient = true
+    outputs[:scene].w = 3840
+    outputs[:scene].h = 2160
+    outputs[:scene].background_color = [64, 64, 64, 255]
+    outputs[:scene].primitives << {x:0, y:0, w:3840, h:2160, path: :background }.sprite!
+    outputs[:scene].primitives << @campfire.render()
+    outputs[:scene].primitives << @friends
+    outputs[:scene].primitives << @rescued
+    outputs[:scene].primitives << @player
+end
+
+def render
+    out = [
+        {x: 0, y: 0, w: 1280, h: 720, path: :scene,
+        source_x: @camera.x-640, source_y: @camera.y-360,
+        source_w: 1280, source_h: 720}.sprite!
+    ]
+    if @rescued.size == @friends_count
+        out << {x: 320, y: 200, w: 640, h: 240, r: 128, g: 128, b: 128}.solid!
+        out << {x: 600, y: 380, w: 640, h: 320, text: "Hurray!"}.label!
+        out << {x: 480, y: 360, w: 640, h: 320, text: "You found all your friends!"}.label!
+    end
+    out
+end
+
 def init args
     args.state.center = {x: 640, y: 360, anchor_x: 0.5, anchor_y: 0.5,
                          w: 4, h: 4, path: "sprites/misc/tiny-star.png",
@@ -68,7 +105,7 @@ end
 def tick args
     if Kernel.tick_count <= 0
         init args
-        calc_circular_orbit(args.state.player, args.state.center)
+        #calc_circular_orbit(args.state.player, args.state.center)
     end
 
     if args.inputs.keyboard.left
