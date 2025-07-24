@@ -28,7 +28,7 @@ def thrust_vector ship
     # Rotation :  Counterclockwise
 
     # Offset sprite rotation 90 degrees Counterclockwise to account for sprite orientation
-    a_rad = deg2dad(ship.angle + 90)
+    a_rad = deg2rad(ship.angle + 90)
 
     # Calculate X and Y components of total Thrust vector.
     ship.vx += Math.cos(a_rad) * ship.thrust
@@ -47,41 +47,34 @@ def calc_circular_orbit(ship, star)
     ship.vy = ty * v
 end
 
-def generate_background
+def generate_background args
     args.outputs[:background].w = 3840
     args.outputs[:background].h = 2160
     args.outputs[:background].background_color = [0, 0, 0, 255]
 end
 
-def calc_camera
-    @camera.x = @player.x.clamp(640, 3200)
-    @camera.y = @player.y.clamp(360, 1800)
+def calc_camera args
+    args.state.camera.x = args.state.player.x.clamp(640, 3200)
+    args.state.camera.y = args.state.player.y.clamp(360, 1800)
 end
 
-def render_scene
-    outputs[:scene].transient = true
-    outputs[:scene].w = 3840
-    outputs[:scene].h = 2160
-    outputs[:scene].background_color = [64, 64, 64, 255]
-    outputs[:scene].primitives << {x:0, y:0, w:3840, h:2160, path: :background }.sprite!
-    outputs[:scene].primitives << @campfire.render()
-    outputs[:scene].primitives << @friends
-    outputs[:scene].primitives << @rescued
-    outputs[:scene].primitives << @player
+def render_scene args
+    args.outputs[:scene].transient = true
+    args.outputs[:scene].w = 3840
+    args.outputs[:scene].h = 2160
+    args.outputs[:scene].background_color = [64, 64, 64, 255]
+    args.outputs[:scene].primitives << {x:0, y:0, w:3840, h:2160, path: :background }.sprite!
+    args.outputs[:scene].primitives << args.state.center
+    args.outputs[:scene].primitives << args.state.ships
 end
 
-def render
+def render args
     out = [
         {x: 0, y: 0, w: 1280, h: 720, path: :scene,
-        source_x: @camera.x-640, source_y: @camera.y-360,
+        source_x: args.state.camera.x-640, source_y: args.state.camera.y-360,
         source_w: 1280, source_h: 720}.sprite!
     ]
-    if @rescued.size == @friends_count
-        out << {x: 320, y: 200, w: 640, h: 240, r: 128, g: 128, b: 128}.solid!
-        out << {x: 600, y: 380, w: 640, h: 320, text: "Hurray!"}.label!
-        out << {x: 480, y: 360, w: 640, h: 320, text: "You found all your friends!"}.label!
-    end
-    out
+    args.outputs.primitives << out
 end
 
 def init args
@@ -93,6 +86,7 @@ def init args
                          w: 16, h: 16, path: "sprites/misc/lowrez-ship-blue.png",
                          vx: 0, vy: 1, thrust: 0.01,
                          m: 10}.sprite!
+    args.state.camera = {x: 0, y: 0}
 
     args.state.ships = []
     args.state.ships << args.state.player
@@ -100,6 +94,7 @@ def init args
                          w: 16, h: 16, path: "sprites/misc/lowrez-ship-red.png",
                          vx: 0, vy: -1, thrust: 0.01,
                          m: 10}.sprite!
+    generate_background args
 end
 
 def tick args
@@ -136,8 +131,8 @@ def tick args
         end
     end
 
-
-    args.outputs.primitives << args.state.center
-    args.outputs.primitives << args.state.ships
+    calc_camera args
+    render_scene args
+    render args
 
 end
