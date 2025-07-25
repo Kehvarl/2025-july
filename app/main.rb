@@ -78,9 +78,9 @@ def render args
 end
 
 def init args
-    args.state.center = {x: 640, y: 360, anchor_x: 0.5, anchor_y: 0.5,
+    args.state.center = {x: 1920, y: 1080, anchor_x: 0.5, anchor_y: 0.5,
                          w: 4, h: 4, path: "sprites/misc/tiny-star.png",
-                         m: 25000}.sprite!
+                         m: 100000}.sprite!
 
     args.state.player =  {x: 400, y: 100, anchor_x: 0.5, anchor_y: 0.5, angle: 0,
                          w: 16, h: 16, path: "sprites/misc/lowrez-ship-blue.png",
@@ -90,7 +90,7 @@ def init args
 
     args.state.ships = []
     args.state.ships << args.state.player
-    args.state.ships << {x: 880, y: 620, anchor_x: 0.5, anchor_y: 0.5, angle: 180,
+    args.state.ships << {x: 1520, y: 2060, anchor_x: 0.5, anchor_y: 0.5, angle: 180,
                          w: 16, h: 16, path: "sprites/misc/lowrez-ship-red.png",
                          vx: 0, vy: -1, thrust: 0.01,
                          m: 10}.sprite!
@@ -121,12 +121,12 @@ def tick args
         s.x += s.vx
         s.y += s.vy
 
-        if s.x <= 8 or s.x >= 1272
-            s.x = s.x.clamp(16, 1264)
+        if s.x <= 8 or s.x >= 3832
+            s.x = s.x.clamp(16, 3824)
             s.vx = 0
         end
-        if s.y <= 8 or s.y >= 712
-            s.y = s.y.clamp(16, 704)
+        if s.y <= 8 or s.y >= 2152
+            s.y = s.y.clamp(16, 2144)
             s.vy = 0
         end
     end
