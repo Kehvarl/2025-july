@@ -51,6 +51,13 @@ def generate_background args
     args.outputs[:background].w = 3840
     args.outputs[:background].h = 2160
     args.outputs[:background].background_color = [0, 0, 0, 255]
+    5000.times do
+        x = rand(3840)
+        y = rand(2160)
+        args.outputs[:background].primitives << {x: x, y: y, w: 4, h: 4,
+                                                 r: rand(255), g: rand(255), b: rand(255),
+                                                 path: "sprites/misc/star.png"}
+    end
 end
 
 def calc_camera args
