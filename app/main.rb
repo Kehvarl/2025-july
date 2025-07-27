@@ -23,6 +23,7 @@ def init args
                          w: 16, h: 16, path: "sprites/misc/lowrez-ship-red.png",
                          vx: 0, vy: -1, thrust: 0.01,
                          m: 10}.sprite!
+    args.state.projctiles = []
     generate_background args
 end
 
@@ -44,16 +45,15 @@ def calculate_physics args
             ay = fy/s.m
             s.vx += ax
             s.vy += ay
-
-            s.x += s.vx
-            s.y += s.vy
-
-            ship_wrap s
         end
+        s.x += s.vx
+        s.y += s.vy
+
+        world_wrap s
     end
 end
 
-def ship_clamp s
+def world_clamp s
     if s.x <= 8 or s.x >= 3832
         s.x = s.x.clamp(16, 3824)
         s.vx = 0
@@ -64,7 +64,7 @@ def ship_clamp s
     end
 end
 
-def ship_wrap s
+def world_wrap s
     s.vx = s.vx.clamp(-5, 5)
     s.vy = s.vy.clamp(-5, 5)
     s.x = s.x % 3840
