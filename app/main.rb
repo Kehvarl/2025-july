@@ -48,16 +48,27 @@ def calculate_physics args
             s.x += s.vx
             s.y += s.vy
 
-            if s.x <= 8 or s.x >= 3832
-                s.x = s.x.clamp(16, 3824)
-                s.vx = 0
-            end
-            if s.y <= 8 or s.y >= 2152
-                s.y = s.y.clamp(16, 2144)
-                s.vy = 0
-            end
+            ship_wrap s
         end
     end
+end
+
+def ship_clamp s
+    if s.x <= 8 or s.x >= 3832
+        s.x = s.x.clamp(16, 3824)
+        s.vx = 0
+    end
+    if s.y <= 8 or s.y >= 2152
+        s.y = s.y.clamp(16, 2144)
+        s.vy = 0
+    end
+end
+
+def ship_wrap s
+    s.vx = s.vx.clamp(-5, 5)
+    s.vy = s.vy.clamp(-5, 5)
+    s.x = s.x % 3840
+    s.y = s.y % 2160
 end
 
 def tick args
