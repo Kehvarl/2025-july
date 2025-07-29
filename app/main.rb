@@ -23,8 +23,14 @@ def init args
                          w: 16, h: 16, path: "sprites/misc/lowrez-ship-red.png",
                          vx: 0, vy: -1, thrust: 0.01,
                          m: 10}.sprite!
-    args.state.projctiles = []
+    args.state.projectiles = []
     generate_background args
+end
+
+def fire_projectile args, ship
+    args.state.projectiles << {x: ship.x, y: ship.y, w: 1, h: 1,
+                              path: "sprites/square/red.png",
+                              m: 1, vx: ship.vx*5, vy: ship.vy*5}
 end
 
 def handle_inputs args
@@ -34,6 +40,8 @@ def handle_inputs args
         args.state.player.angle -= 1
     elsif args.inputs.keyboard.up
         thrust_vector(args.state.player)
+    elsif args.inputs.keyboard.space
+        fire_projectile args, args.state.player
     end
 end
 
@@ -50,6 +58,18 @@ def calculate_physics args
         s.y += s.vy
 
         world_wrap s
+    end
+
+    args.state.projectiles.each do |bullet|
+        args.state.stars.each do |center|
+            fx,fy = calc_gravity(bullet, center)
+            ax = fx/bullet.m
+            ay = fy/bullet.m
+            bullet.vx += ax
+            bullet.vy += ay
+        end
+        bullet.x += bullet.vx
+        bullet.y += bullet.vy
     end
 end
 

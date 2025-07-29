@@ -24,6 +24,8 @@ def render_scene args
     args.outputs[:scene].primitives << {x:0, y:0, w:3840, h:2160, path: :background }.sprite!
     args.outputs[:scene].primitives << args.state.stars
     args.outputs[:scene].primitives << args.state.ships
+    args.outputs[:scene].primitives << args.state.projectiles
+
 end
 
 def render args
