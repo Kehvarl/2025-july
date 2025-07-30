@@ -28,9 +28,11 @@ def init args
 end
 
 def fire_projectile args, ship
-    args.state.projectiles << {x: ship.x, y: ship.y, w: 1, h: 1,
-                              path: "sprites/square/red.png",
-                              m: 1, vx: ship.vx*5, vy: ship.vy*5}
+    shot = {x: ship.x, y: ship.y, w: 1, h: 1,
+            path: "sprites/square/red.png", angle: ship.angle,
+            m: 1, thrust: 10, vx: ship.vx, vy: ship.vy}
+    thrust_vector shot
+    args.state.projectiles << shot
 end
 
 def handle_inputs args
