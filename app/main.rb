@@ -30,7 +30,7 @@ end
 def fire_projectile args, ship
     shot = {x: ship.x, y: ship.y, w: 1, h: 1,
             path: "sprites/square/red.png", angle: ship.angle,
-            m: 1, thrust: 10, vx: ship.vx, vy: ship.vy}
+            m: 100000, thrust: 10, vx: ship.vx, vy: ship.vy}
     thrust_vector shot
     args.state.projectiles << shot
 end
@@ -42,7 +42,7 @@ def handle_inputs args
         args.state.player.angle -= 1
     elsif args.inputs.keyboard.up
         thrust_vector(args.state.player)
-    elsif args.inputs.keyboard.space
+    elsif args.inputs.keyboard.space and args.state.projectiles.size <= 4
         fire_projectile args, args.state.player
     end
 end
@@ -73,6 +73,7 @@ def calculate_physics args
         bullet.x += bullet.vx
         bullet.y += bullet.vy
     end
+    args.state.projectiles = args.state.projectiles.select{|p| p.x > 0 and p.x < 3840 and p.y > 0 and p.y < 2160}
 end
 
 def world_clamp s
